@@ -9,9 +9,15 @@ h1 {
 }
 
 nav {
-    margin: 0 auto;
+    text-align: center;
 }
 
-li {
-    padding: space-between;
+ul {
+    list-style-type: none;
+}
+
+li > a {
+    margin: 5px 10px;
+    text-decoration: none;
+
 }
