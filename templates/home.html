@@ -1,11 +1,16 @@
+<!-- home.html -->
+{% extends 'base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music App</title>
+    <title>{% block title %}Home - Music App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Welcome Home!!!</h1>
+    {% block content %}
+    <h1>Welcome To My Music App!</h1>
+    {% endblock %}
 </body>
 </html>
