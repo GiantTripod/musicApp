@@ -7,3 +7,11 @@ h1 {
     color: #348ac4;
     text-align: center;
 }
+
+nav {
+    margin: 0 auto;
+}
+
+li {
+    padding: space-between;
+}
