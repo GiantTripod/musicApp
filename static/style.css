@@ -1,23 +1,26 @@
-body {
+body, * {
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    margin: 2% 1%;
+    margin: 0;
 }
 
 h1 {
     color: #348ac4;
     text-align: center;
+    margin: 5px;
 }
 
 nav {
     text-align: center;
+    padding: 10px 5px;
 }
 
 ul {
     list-style-type: none;
+    padding: 0;
 }
 
 li > a {
-    margin: 5px 10px;
     text-decoration: none;
+    padding: 5px;
 
 }
