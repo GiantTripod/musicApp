@@ -1,27 +1,46 @@
-from flask import Flask, redirect, request, render_template
+from flask import Flask, redirect, render_template, session, url_for, request
 from spotipy.oauth2 import SpotifyOAuth
+import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 
 app = Flask(__name__)
 
+
+
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
+
+
 SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
-SPOTIPY_CLIENT_SECRET = 'da931e8a3f19400580c8bf707ba6ce83'
+SPOTIPY_CLIENT_SECRET = '5778fc1f6630417c9dd03cef4e26998a'
 SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
 
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read')
 
-
 @app.route('/')
 def home():
-       auth_url = sp_oauth.get_authorize_url()
-       return redirect(auth_url)
+    # Check if the user is authenticated
+    if 'token_info' not in session or sp_oauth.is_token_expired(session['token_info']):
+        # If not authenticated, redirect to Spotify authorization
+        auth_url = sp_oauth.get_authorize_url()
+        return redirect(auth_url)
+    
+    # If authenticated, render the homepage
+    return render_template('home.html')
 
+# Your callback route
 @app.route('/callback')
 def callback():
+    # Handle Spotify callback and get access token
     token_info = sp_oauth.get_access_token(request.args['code'])
-    # Now you can use token_info to make Spotify API requests
-    # For example: sp = spotipy.Spotify(auth=token_info['access_token'])
-    return render_template('home.html')
+    
+    # Store token_info in the session for later use
+    session['token_info'] = token_info
+    
+    # Redirect to the homepage
+    return redirect(url_for('home'))
 
 @app.route('/about')
 def about():
