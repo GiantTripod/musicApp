@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import render_template
-from app.authentication import make_authenticated_request
+from app.authentication import get_spotify_client
 
 
 app = Flask(__name__)
@@ -8,7 +8,23 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-        return render_template('home.html')
+        # Get the Spotify client
+        sp = get_spotify_client()
+
+    # Example: Get the user's saved tracks
+        saved_tracks = sp.current_user_saved_tracks(limit=10)
+
+    # Extract relevant information for display
+        tracks_info = [
+        {
+            'name': track['track']['name'],
+            'artists': ', '.join(artist['name'] for artist in track['track']['artists']),
+            'url': track['track']['external_urls']['spotify']
+        }
+        for track in saved_tracks['items']
+        ]
+
+        return render_template('home.html', saved_tracks=tracks_info)
 
 @app.route('/about')
 def about():
