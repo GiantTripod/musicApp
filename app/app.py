@@ -1,7 +1,6 @@
 from flask import Flask
 from flask import render_template
-
-
+from app.authentication import make_authenticated_request
 
 
 app = Flask(__name__)
