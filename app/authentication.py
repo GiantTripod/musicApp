@@ -1,10 +1,14 @@
 import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_spotify_client():
     SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
-    SPOTIPY_CLIENT_SECRET = '5778fc1f6630417c9dd03cef4e26998a'
+    SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
     SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
 
     sp_oauth = SpotifyOAuth(
