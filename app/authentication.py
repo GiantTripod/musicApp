@@ -12,7 +12,7 @@ def get_spotify_client():
     SPOTIPY_REDIRECT_URI = 'https://gianttripod.pythonanywhere.com/callback'
 
     sp_oauth = SpotifyOAuth(
-        SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read'
+        SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-read-email user-read-private'
     )
     
     token_info = sp_oauth.get_cached_token()
