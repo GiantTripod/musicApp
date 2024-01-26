@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, session, url_for, request, flash
-import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import spotipy
 from spotipy import SpotifyException
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -17,7 +17,7 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
 SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-SPOTIPY_REDIRECT_URI = 'https://GiantTripod.pythonanywhere.com:8080/callback'
+SPOTIPY_REDIRECT_URI = 'https://gianttripod.pythonanywhere.com:8080/callback'
 
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read user-read-private')
 
