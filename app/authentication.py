@@ -9,7 +9,7 @@ load_dotenv()
 def get_spotify_client():
     SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
     SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-    SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
+    SPOTIPY_REDIRECT_URI = 'https://GiantTripod.pythonanywhere.com/callback'
 
     sp_oauth = SpotifyOAuth(
         SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read'
