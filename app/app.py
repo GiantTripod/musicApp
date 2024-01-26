@@ -17,7 +17,7 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
 SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-SPOTIPY_REDIRECT_URI = 'https://GiantTripod.pythonanywhere.com/callback'
+SPOTIPY_REDIRECT_URI = 'https://GiantTripod.pythonanywhere.com:8080/callback'
 
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read user-read-private')
 
