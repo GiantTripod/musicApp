@@ -18,8 +18,9 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY")
 SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
 SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 SPOTIPY_REDIRECT_URI = 'https://gianttripod.pythonanywhere.com/'
+SCOPES = 'user-read-email user-read-private user-library-read'
 
-sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-read-email user-read-private')
+sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPES)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,23 +61,29 @@ def home():
 
 @app.route('/callback')
 def callback():
-    print('Callback: hello world')
-    token_info = sp_oauth.get_access_token(request.args['code'])
-    print(f"Token Info: {token_info}")
-    session['token_info'] = token_info
-    sp = spotipy.Spotify(auth=token_info['access_token'])
-    user_data = sp.me()
-    print(f"User Data: {user_data}")
-    user_id = user_data.get('id')
-    print(f"User ID: {user_id}")
-    if user_id:
-        user = load_user(user_id)
-        if user:
-            login_user(user)
-            print(f"User logged in: {current_user.id}, {current_user.name}")
-        else:
-            flash("Failed to log in. Please try again.")
-    return redirect(url_for('home'))
+    try:
+        print('Callback: hello world')
+        token_info = sp_oauth.get_access_token(request.args['code'])
+        print(f"Token Info: {token_info}")
+        session['token_info'] = token_info
+        sp = spotipy.Spotify(auth=token_info['access_token'])
+        user_data = sp.me()
+        print(f"User Data: {user_data}")
+        user_id = user_data.get('id')
+        print(f"User ID: {user_id}")
+        if user_id:
+            user = load_user(user_id)
+            if user:
+                login_user(user)
+                print(f"User logged in: {current_user.id}, {current_user.name}")
+            else:
+                flash("Failed to log in. Please try again.")
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        print(f"Error in callback route: {e}")
+        flash("Failed to authenticate. Please try again.")
+        return redirect(url_for('home'))
 
 @app.route('/profile')
 @login_required
