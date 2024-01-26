@@ -1,6 +1,7 @@
 from flask import Flask, redirect, render_template, session, url_for, request, flash
 from spotipy.oauth2 import SpotifyOAuth
 import os
+import secrets
 import spotipy
 from spotipy import SpotifyException
 from dotenv import load_dotenv
@@ -13,7 +14,7 @@ login_manager = LoginManager()
 login_manager.login_view = 'login'
 login_manager.init_app(app)
 
-app.secret_key = os.getenv("FLASK_SECRET_KEY")
+app.secret_key = os.getenv("FLASK_SECRET_KEY", secrets.token_hex(16))
 
 SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
 SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
