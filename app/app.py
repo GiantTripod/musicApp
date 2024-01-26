@@ -24,6 +24,7 @@ sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRE
 
 @login_manager.user_loader
 def load_user(user_id):
+    print('Load user: Start')
     if user_id:
         token_info = session.get('token_info', None)
         print(f"Token Info in load_user: {token_info}")
@@ -40,8 +41,11 @@ def load_user(user_id):
         print(f"User Data in load_user: {user_data}")
 
         if user_data and 'id' in user_data:
-            return User(user_data['id'], user_data.get('display_name', 'Unknown'))
+            user = User(user_data['id'], user_data.get('display_name', 'Unknown'))
+            print(f"User object created: {user.id}, {user.name}")
+            return user
 
+    print('Load user: End')
     return None
 
 class User(UserMixin):
@@ -51,10 +55,13 @@ class User(UserMixin):
 
 @app.before_request
 def before_request():
+    print('Before request: Start')
     if current_user.is_authenticated:
         print('User is authenticated')
         print(f"User ID: {current_user.id}, User Name: {current_user.name}")
-        # You can use current_user.id and current_user.name in your application
+    else:
+        print('User is not authenticated')
+    print('Before request: End')
 
 
 @app.route('/')
