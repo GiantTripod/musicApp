@@ -78,12 +78,12 @@ def callback():
                 print(f"User logged in: {current_user.id}, {current_user.name}")
             else:
                 flash("Failed to log in. Please try again.")
-        return redirect(url_for('home'))
+        return redirect(url_for('profile'))
 
     except Exception as e:
         print(f"Error in callback route: {e}")
         flash("Failed to authenticate. Please try again.")
-        return redirect(url_for('home'))
+        return redirect(url_for('profile'))
 
 @app.route('/profile')
 @login_required
@@ -97,7 +97,7 @@ def profile():
 def logout():
     logout_user()
     session.pop('token_info', None)  # Clear Spotify OAuth token information
-    return redirect(url_for('home'))
+    return redirect(url_for('discovery'))
 
 @app.route('/about')
 def about():
