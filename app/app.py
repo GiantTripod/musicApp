@@ -1,7 +1,7 @@
 from flask import Flask, redirect, render_template, session, url_for, request, flash
+import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 import os
-import spotipy
 from spotipy import SpotifyException
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
