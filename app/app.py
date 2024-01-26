@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, session, url_for, request, f
 from spotipy.oauth2 import SpotifyOAuth
 import os
 import spotipy
+from spotipy import SpotifyException
 from dotenv import load_dotenv
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -23,11 +24,19 @@ sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRE
 @login_manager.user_loader
 def load_user(user_id):
     if user_id:
+        token_info = session.get('token_info', None)
+        if token_info and sp_oauth.is_token_expired(token_info):
+            try:
+                token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+                session['token_info'] = token_info
+            except SpotifyException as e:
+                print(f"Error refreshing access token: {e}")
+
         sp = spotipy.Spotify(auth=session['token_info']['access_token'])
         user_data = sp.me()
         if user_data and 'id' in user_data:
             return User(user_data['id'], user_data.get('display_name', 'Unknown'))
-    
+
     return None
 
 class User(UserMixin):
@@ -100,126 +109,3 @@ def login():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-# from flask import Flask, redirect, render_template, session, url_for, request
-# from spotipy.oauth2 import SpotifyOAuth
-# import os
-# from dotenv import load_dotenv
-# from flask_login import LoginManager, UserMixin, login_required
-
-
-
-# load_dotenv()
-
-
-# app = Flask(__name__)
-
-# login_manager = LoginManager()
-
-# app.secret_key = os.getenv("FLASK_SECRET_KEY")
-
-
-# SPOTIPY_CLIENT_ID = 'e139a0fc9290404996790866f596dd74'
-# SPOTIPY_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
-# SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
-
-# sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope='user-library-read')
-
-# @app.route('/')
-# def home():
-#     # Check if the user is authenticated
-#     if 'token_info' not in session or sp_oauth.is_token_expired(session['token_info']):
-#         # If not authenticated, redirect to Spotify authorization
-#         auth_url = sp_oauth.get_authorize_url()
-#         return redirect(auth_url)
-    
-#     # If authenticated, render the homepage
-#     return render_template('home.html')
-
-# # Your callback route
-# @app.route('/callback')
-# def callback():
-#     # Handle Spotify callback and get access token
-#     token_info = sp_oauth.get_access_token(request.args['code'])
-    
-#     # Store token_info in the session for later use
-#     session['token_info'] = token_info
-    
-#     # Redirect to the homepage
-#     return redirect(url_for('home'))
-
-
-# class User(UserMixin):
-#     def __init__(self, id, name):
-#         self.id = id
-#         self.name = name
-
-# @login_manager.user_loader
-# def load_user(user_id):
-#     user_data = sp_oauth.user(user_id)
-#     print(user_data)
-#     return User(user_data['id'], user_data['display_name'])
-
-
-# @app.before_request
-# def before_request():
-#     if session.get('token_info'):
-#         print(session['token_info'])
-#         user = load_user(session['token_info']['sub'])  # Replace 'sub' with actual user ID key
-#         if user is not None:
-#             login_user(user)
-
-        
-
-
-# login_manager.init_app(app)
-
-
-# @app.route('/profile')
-# @login_required
-# def profile():
-#     # Access user data based on logged-in user
-#     sp = spotipy.Spotify(auth=session['token_info']['access_token'])
-#     return render_template('profile.html', user=sp.current_user())
-
-
-# @app.route('/logout')
-# def logout():
-#     # Clear session data
-#     session.clear()
-#     login_manager.logout_user()
-#     return redirect(url_for('home'))
-
-
-
-# @app.route('/about')
-# def about():
-#         return render_template('about.html')
-
-
-# @app.route('/discovery')
-# def discovery():
-#         return render_template('discovery.html')
-
-
-# @app.route('/login')
-# def login():
-#         return render_template('login.html')
-
-
-
-
-# if __name__ == "__main__":
-#         app.run(debug=True)
