@@ -26,6 +26,8 @@ sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRE
 def load_user(user_id):
     if user_id:
         token_info = session.get('token_info', None)
+        print(f"Token Info in load_user: {token_info}")
+
         if token_info and sp_oauth.is_token_expired(token_info):
             try:
                 token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
@@ -35,6 +37,8 @@ def load_user(user_id):
 
         sp = spotipy.Spotify(auth=session['token_info']['access_token'])
         user_data = sp.me()
+        print(f"User Data in load_user: {user_data}")
+
         if user_data and 'id' in user_data:
             return User(user_data['id'], user_data.get('display_name', 'Unknown'))
 
