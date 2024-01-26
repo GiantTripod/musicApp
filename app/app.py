@@ -121,7 +121,7 @@ def profile():
 def logout():
     logout_user()
     session.pop('token_info', None)  # Clear Spotify OAuth token information
-    return redirect(url_for('discovery'))
+    return redirect(url_for('home'))
 
 @app.route('/about')
 def about():
@@ -136,7 +136,7 @@ def login():
     if 'token_info' not in session or sp_oauth.is_token_expired(session['token_info']):
         auth_url = sp_oauth.get_authorize_url()
         return redirect(auth_url)
-    return render_template('profile.html')
+    return redirect(url_for('profile'))
 
 if __name__ == "__main__":
     app.run(debug=True)
