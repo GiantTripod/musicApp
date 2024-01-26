@@ -23,6 +23,7 @@ SCOPES = 'user-read-email user-read-private user-library-read'
 
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SCOPES)
 
+
 @login_manager.user_loader
 def load_user(user_id):
     print('Load user: Start')
@@ -45,6 +46,10 @@ def load_user(user_id):
             user = User(user_data['id'], user_data.get('display_name', 'Unknown'))
             print(f"User object created: {user.id}, {user.name}")
             return user
+        else:
+            print('User_data or user ID not present')
+    else:
+        print('User ID not present')
 
     print('Load user: End')
     return None
@@ -77,12 +82,18 @@ def callback():
         print('Callback: hello world')
         token_info = sp_oauth.get_access_token(request.args['code'])
         print(f"Token Info: {token_info}")
+        
+        # Store token_info in the session
         session['token_info'] = token_info
+
+        # Print user data
         sp = spotipy.Spotify(auth=token_info['access_token'])
         user_data = sp.me()
         print(f"User Data: {user_data}")
+
         user_id = user_data.get('id')
         print(f"User ID: {user_id}")
+
         if user_id:
             user = load_user(user_id)
             if user:
@@ -90,6 +101,7 @@ def callback():
                 print(f"User logged in: {current_user.id}, {current_user.name}")
             else:
                 flash("Failed to log in. Please try again.")
+
         return redirect(url_for('profile'))
 
     except Exception as e:
